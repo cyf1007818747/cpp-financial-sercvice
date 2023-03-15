@@ -8,6 +8,7 @@ to run the compiled binary, type in terminal in the root folder:
 #include <iostream>
 #include <vector>
 #include <string>
+#include <limits>
 
 using namespace std;
 
@@ -36,38 +37,74 @@ void cpp_types_trial() {
     output += "var: " + string(1, var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
   }
   {
-    char var = '5';
-    output += "var: " + string(1, var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
-  }
-  { // to_string only converts an int to a string
-    char var = 5;
+    signed char var = -'5';
     output += "var: " + to_string(var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
   }
   {
-    char var = '5';
+    unsigned char var = -5;
     output += "var: " + to_string(var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
   }
   {
-    char16_t var = '5';
-    output += "var: " + string(1, var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
-  }
-  {
-    char32_t var = '5';
-    output += "var: " + string(1, var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
-  }
-  {
-    wchar_t var = '5';
-    output += "var: " + string(1, var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
-  }
-  {
-    signed char var = '5';
+    unsigned long var = -5;
     output += "var: " + to_string(var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
   }
+  {
+    signed int var = 64;
+    output += "var: " + to_string(var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
+  }
+  {
+    signed char var = 64;
+    output += "var: " + string(1, var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
+  }
+  {
+    signed char var = -64;
+    output += "var: " + string(1, var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
+  }
+  {
+    unsigned short var = -1;
+    output += "var: " + to_string(var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
+  }
+  {
+    signed short var = __SHRT_MAX__;
+    output += "var: " + to_string(var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
+  }
+  {
+    unsigned int var = -1;
+    output += "var: " + to_string(var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
+  }
+  {
+    long double var = -1;
+    output += "var: " + to_string(var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
+  }
+  {
+    bool var = false;
+    output += "var: " + to_string(var) + ", type: " + typeid(var).name() + ", size of var: " + to_string(sizeof(var)) + "\n";
+  }
+  // decltype will be discussed later in the cplusplus.com
 
   cout << output;
 }
 
+template <typename T> constexpr T sum_of_2(T a, T b) {
+  a += 1;
+  return a + b;
+}
+
+/** @brief Test the methods in std::numeric_limits */
+void numeric_limits_trial() {
+  cout << int() << endl;
+  int i = 2023;
+  i += 1;
+  constexpr int j = 2023;
+  constexpr int k = 1 + j;
+  cout << k << endl;
+  int sum = sum_of_2(i, 3);
+  cout << "i: " << i << ", sum: " << sum << endl;
+  cout << "4. " << numeric_limits<unsigned int>::digits10 << endl;
+  cout << "5. " << numeric_limits<double>::epsilon << endl;
+}
+
 int main() {
-    cpp_standard_ver_trial();
+    numeric_limits_trial();
     return 0;
 }
