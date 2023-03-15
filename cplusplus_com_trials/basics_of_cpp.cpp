@@ -1,8 +1,8 @@
 /* 
 to compile this file, type in terminal in the root folder: 
-  g++ -std=c++20 cplusplus_com_trials/basics_of_cpp.cpp -o .bin/basics_of_cpp.bin
+  g++ -std=c++20 cplusplus_com_trials/basics_of_cpp.cpp -o .bin/cplusplus_com_trials@@basics_of_cpp.bin
 to run the compiled binary, type in terminal in the root folder: 
-  .bin/basics_of_cpp.bin
+  .bin/cplusplus_com_trials@@basics_of_cpp.bin
 */
  
 #include <iostream>
