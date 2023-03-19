@@ -10,6 +10,7 @@ to run the compiled binary, type in terminal in the root folder:
 #include <string>
 #include <unordered_set>
 #include <unordered_map>
+#include <cmath>
 
 using namespace std;
 
@@ -233,7 +234,70 @@ string minWindow(string s, string t) {
   return s.substr(mw_l, mw_r + 1 - mw_l);
 }
 
-int main() {
 
+// q 633
+bool judgeSquareSum(int c) {
+    if (c < 2) {
+      return true;
+    }
+    for (int a = 0; a <= floor(sqrt(c)); a++) {
+      int remain = c - a*a;
+      int remain_sqrt = sqrt(remain);
+      if (remain_sqrt * remain_sqrt == remain) {
+        return true;
+      }
+    }
+    return false;
+}
+
+// q680
+// 1. 2 pointers l and r from begin and end
+// 2. If encounterING 1 not equal char, try whether skipping each of them is ok.
+bool validPalindrome(string s) {
+    if (s.size() < 2) {
+      return true;
+    } else if (s.size() == 2) {
+      return s[0] == s[1];
+    }
+    int l = 0, r = s.size() - 1;
+    while (l < r) {
+      if (s[l] == s[r]) {
+        ++l;
+        --r;
+      } else {
+        bool case1= true;
+        int l1 = l+1;
+        bool case2 = true;
+        int r1 = r-1;
+        while (l1 < r) {
+          if (s[l1] != s[r]) {
+            case1 = false;
+            break;
+          }
+          ++l1;
+          --r;
+        }
+        if (case1) {
+          return true;
+        }
+        while (l < r1) {
+          if (s[l] != s[r1]) {
+            case2 = false;
+            break;
+          }
+          ++l;
+          --r1;
+        }
+        return case2;
+      }
+    }
+    return true;
+}
+
+int main() {
+  string s = "1234856543421";
+  bool output = validPalindrome(s);
+  // int output = sqrt(10);
+  cout << output << endl;
   return 0;
 }
