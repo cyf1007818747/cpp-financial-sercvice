@@ -294,6 +294,16 @@ bool validPalindrome(string s) {
     return true;
 }
 
+// q 540
+int singleNonDuplicate(vector<int>& nums) {
+    if (nums.size() == 1) {
+      return nums[0];
+    }
+    int l = 0, r = nums.size() - 1;
+    int mid;
+    return -1;
+}
+
 int main() {
   string s = "1234856543421";
   bool output = validPalindrome(s);
