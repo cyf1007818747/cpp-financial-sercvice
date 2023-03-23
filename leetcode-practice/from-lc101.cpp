@@ -294,19 +294,58 @@ bool validPalindrome(string s) {
     return true;
 }
 
+// helper function for q 540, to check whether the single element is to the left or right to mid, or at the mids
+// return -1 if at left, 1 if at the right, and 0 if at the mid
+// 1 <= nums.length <= 10^5
+// 0 <= mid < 10^5
+int posOfSingleNode(vector<int>& nums, int mid) {
+  if (nums.size() == 1) {
+    return 0;
+  }
+  if (mid == 0) {
+    return nums[mid] == nums[mid + 1] ? 1 : 0;
+  } else if (mid == nums.size() - 1) {
+    return nums[mid] == nums[mid - 1] ? -1 : 0;
+  }
+  if (nums[mid] == nums[mid - 1]) {
+    return mid % 2 == 0 ? -1 : 1;
+  } else if (nums[mid] == nums[mid + 1]) {
+    return mid % 2 == 0 ? 1 : -1;
+  } else {
+    // cout << "nums[mid] is the single node" << mid << ", " << nums[mid] << endl;
+    return 0;
+  }
+}
+
 // q 540
+// 1 <= nums.length <= 10^5
+// 0 <= nums[i] <= 10^5
 int singleNonDuplicate(vector<int>& nums) {
     if (nums.size() == 1) {
       return nums[0];
     }
     int l = 0, r = nums.size() - 1;
     int mid;
+    while (l <= r) {
+      mid = l + (r - l) / 2;
+      // cout << l << ", " << mid << ", " << r << endl;
+      if (posOfSingleNode(nums, mid) == 0) {
+        return nums[mid];
+      } else if (posOfSingleNode(nums, mid) == -1) {
+        r = mid - 1;
+      } else {
+        l = mid + 1;
+      }
+    }
+    if (mid >= 0 && mid < nums.size()) {
+      return nums[mid];
+    }
     return -1;
 }
 
 int main() {
-  string s = "1234856543421";
-  bool output = validPalindrome(s);
+  vector<int> nums = {3,3,7,7,10,11,11};
+  int output = singleNonDuplicate(nums);
   // int output = sqrt(10);
   cout << output << endl;
   return 0;
