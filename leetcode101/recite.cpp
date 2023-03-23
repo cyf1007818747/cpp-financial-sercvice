@@ -11,7 +11,8 @@ to run the compiled binary, type in terminal in the root folder:
 
 using namespace std;
 
-// ########################### binary search algorithms -- 默写 -- 左闭右闭方法 ########################
+// ########################### binary search algorithms -- 默写 -- 左闭右闭方法 ###########################
+
 // 1. find the index of any number equals to the key.
 int bin_search_any_equal(vector<int> arr, int key) {
   int l = 0, r = arr.size() - 1;
@@ -145,6 +146,8 @@ void trial_bin_search() {
   int target_num = index >= 0 && index < arr.size() ? arr[index] : -1;
   cout << index << ", " << target_num << endl;
 }
+
+// ########################### 各种排序算法 -- 默写 -- ###########################
 
 
 int main() {
