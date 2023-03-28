@@ -11,8 +11,24 @@ to run the compiled binary, type in terminal in the root folder:
 #include <unordered_set>
 #include <unordered_map>
 #include <cmath>
+#include <sstream>
 
 using namespace std;
+
+// #################################### Helper functions ######################################
+template<typename T>
+std::string to_string(const T& iterable) {
+    // static_assert(std::is_same_v<typename T::value_type, typename T::value_type>(), "Object must be iterable.");
+    std::ostringstream oss;
+    auto it = iterable.begin();
+    if (it != iterable.end()) {
+        oss << *it++;
+    }
+    for (; it != iterable.end(); ++it) {
+        oss << ',' << *it;
+    }
+    return oss.str();
+}
 
 // q 605
 bool canPlaceFlowers(vector<int>& flowerbed, int n) {
@@ -343,10 +359,57 @@ int singleNonDuplicate(vector<int>& nums) {
     return -1;
 }
 
+// q 451
+string frequencySort(string s) {
+    if (s.size() < 2) {
+      return s;
+    }
+    unordered_map<char, int> map;
+    int max_count = 0;
+    for (const char & c: s) {
+      ++map[c];
+      max_count = max(max_count, map[c]);
+    }
+    // for (auto p : map) {
+    //   cout << p.first << ", " << p.second << endl;
+    // }
+    vector<vector<char>> bucket(max_count + 1);
+    for (const auto & [key, value] : map) {
+      bucket[value].push_back(key);
+    }
+    string strr = "";
+    for (int i = max_count; i >= 0; --i) {
+      for (const char & c : bucket[i]) {
+        strr.append(string(i, c));
+      }
+    }
+  return strr;
+}
+
+// q 75
+void sortColors(vector<int>& nums) {
+    vector<int> color_counts(3, 0);
+    for (const int & color : nums) {
+      ++color_counts[color];
+    }
+    color_counts[1] += color_counts [0];
+    color_counts[2] += color_counts[1];
+    // cout << to_string(color_counts) << endl;
+    for (int i = 0; i < nums.size(); ++i) {
+      if (i < color_counts[0]) {
+        nums[i] = 0;
+      } else if (i < color_counts[1]) {
+        nums[i] = 1;
+      } else {
+        nums[i] = 2;
+      }
+    }
+}
+
 int main() {
-  vector<int> nums = {3,3,7,7,10,11,11};
-  int output = singleNonDuplicate(nums);
-  // int output = sqrt(10);
-  cout << output << endl;
+  vector<int> output = {0,1,2,0,0,1,2,2,2,1,0};
+  cout << to_string(output) << endl;
+  sortColors(output);
+  cout << to_string(output) << endl;
   return 0;
 }
