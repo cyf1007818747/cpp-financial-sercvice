@@ -17,7 +17,7 @@ using namespace std;
 
 // #################################### Helper functions ######################################
 template<typename T>
-std::string to_string(const T& iterable) {
+std::string coll_to_string(const T& iterable) {
     // static_assert(std::is_same_v<typename T::value_type, typename T::value_type>(), "Object must be iterable.");
     std::ostringstream oss;
     auto it = iterable.begin();
@@ -25,7 +25,7 @@ std::string to_string(const T& iterable) {
         oss << *it++;
     }
     for (; it != iterable.end(); ++it) {
-        oss << ',' << *it;
+        oss << ", " << *it;
     }
     return oss.str();
 }
@@ -406,10 +406,72 @@ void sortColors(vector<int>& nums) {
     }
 }
 
+// q 257
+// 1. Define a helpter function, that has inputs: a node, the path string till now, and the ref of answer vector, and has the output: void.
+// 2. If the current node's both left and right pointer is null, append the current node's value to the path string and return.
+// 3. If any of left or right node is not null, call the helper function to left or right node by add the current val to the path string.
+struct TreeNode {
+  int val;
+  TreeNode *left;
+  TreeNode *right;
+  TreeNode() : val(0), left(nullptr), right(nullptr) {}
+  TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+  TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+
+void dfs_q257(TreeNode * node, string path, vector<string> & ans) {
+  if (node->left == nullptr && node->right == nullptr) {
+    ans.push_back(path);
+    return;
+  }
+  if (node->left != nullptr) {
+    dfs_q257(node->left, path+"->"+to_string(node->left->val), ans);
+  }
+  if (node->right != nullptr) {
+    dfs_q257(node->right, path+"->"+to_string(node->right->val), ans);
+  }
+}
+ 
+vector<string> binaryTreePaths(TreeNode * root) {
+    vector<string> ans;
+    if (root == nullptr) {
+      return ans;
+    }
+    dfs_q257(root, to_string(root->val), ans);
+    return ans;
+}
+
+// q 47
+// 1. Define a search function that has the inputs: pos, list, ans
+// 2. If pos != last: swap from pos till the last that do not duplicate
+void dfs_q47(size_t pos, size_t n, vector<int> & nums, vector<vector<int>> & ans) {
+  if (pos == n) {
+    ans.push_back(nums);
+    return;
+  }
+  unordered_set<int> iterated_elem;
+  for (size_t i = pos; i < n; ++i) {
+    if (iterated_elem.count(nums[i]) == 0) {
+      swap(nums[pos], nums[i]);
+      dfs_q47(pos+1, n, nums, ans);
+      swap(nums[pos], nums[i]);
+      iterated_elem.insert(nums[i]);
+    }
+  }
+}
+
+vector<vector<int>> permuteUnique(vector<int>& nums) {
+  vector<vector<int>> ans;
+  unordered_set<int> iterated_elem;
+  dfs_q47(0, nums.size(), nums, ans);
+  return ans;
+}
+
 int main() {
-  vector<int> output = {0,1,2,0,0,1,2,2,2,1,0};
-  cout << to_string(output) << endl;
-  sortColors(output);
-  cout << to_string(output) << endl;
+  vector<int> nums = { 3, 3 };
+  vector<vector<int>> output = permuteUnique(nums);
+  for (vector<int> vec : output) {
+    cout << coll_to_string(vec) << endl;
+  }
   return 0;
 }
