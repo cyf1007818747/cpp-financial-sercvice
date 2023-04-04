@@ -467,11 +467,86 @@ vector<vector<int>> permuteUnique(vector<int>& nums) {
   return ans;
 }
 
-int main() {
-  vector<int> nums = { 3, 3 };
-  vector<vector<int>> output = permuteUnique(nums);
-  for (vector<int> vec : output) {
-    cout << coll_to_string(vec) << endl;
+// q 91 -- use O(n) space complexity
+int numDecodings(string s) {
+  int n = s.length();
+  if (n == 0) {
+    return 0;
+  } else if (n == 1) {
+    return s[0] > '0' ? 1 : 0;
   }
+  vector<int> dp(n, 0);
+  if (s[0] == '0') {
+    return 0;
+  }
+  dp[0] = 1;
+  int num = (s[0] - '0')*10 + s[1] - '0';
+  if (num == 10 || num == 20) {
+    dp[1] = 1;
+  } else if (num > 26) {
+    dp[1] = s[1] == '0' ? 0 : 1;
+  } else {
+    dp[1] = 2;
+  }
+  for (int i = 2; i < n; ++i) {
+    int prev = s[i-1] - '0';
+    int cur = s[i] - '0';
+    if (cur == 0 && !(prev == 1 || prev == 2)) {
+      return 0;
+    } else if (cur == 0 && (prev == 1 || prev == 2)) {
+      dp[i] = dp[i-2];
+    } else if ((prev == 1 && cur > 0) || (prev == 2 && cur > 0 && cur < 7)) {
+      dp[i] = dp[i-1] + dp[i-2];
+    } else {
+      dp[i] = dp[i-1];
+    }
+  }
+  return dp[n - 1];
+}
+
+// q 91 -- use O(1) space complexity
+int numDecodings_small_space(string s) {
+  int n = s.length();
+  if (n == 0) {
+    return 0;
+  } else if (n == 1) {
+    return s[0] > '0' ? 1 : 0;
+  }
+  int dp_pprev = 0, dp_prev = 0, dp_curr = 0;
+  if (s[0] == '0') {
+    return 0;
+  }
+  dp_pprev = 1;
+  int num = (s[0] - '0')*10 + s[1] - '0';
+  if (num == 10 || num == 20) {
+    dp_prev = 1;
+  } else if (num > 26) {
+    dp_prev = s[1] == '0' ? 0 : 1;
+  } else {
+    dp_prev = 2;
+  }
+  dp_curr = dp_prev;
+  for (int i = 2; i < n; ++i) {
+    int prev = s[i-1] - '0';
+    int cur = s[i] - '0';
+    if (cur == 0 && !(prev == 1 || prev == 2)) {
+      return 0;
+    } else if (cur == 0 && (prev == 1 || prev == 2)) {
+      dp_curr = dp_pprev;
+    } else if ((prev == 1 && cur > 0) || (prev == 2 && cur > 0 && cur < 7)) {
+      dp_curr = dp_pprev + dp_prev;
+    } else {
+      dp_curr = dp_prev;
+    }
+    dp_pprev = dp_prev;
+    dp_prev = dp_curr;
+  }
+  return dp_curr;
+}
+
+int main() {
+  string s = "226";
+  int output = numDecodings_small_space(s);
+  cout << output << endl;
   return 0;
 }
