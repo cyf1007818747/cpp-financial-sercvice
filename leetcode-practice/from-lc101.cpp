@@ -544,9 +544,162 @@ int numDecodings_small_space(string s) {
   return dp_curr;
 }
 
+// q 53 -- use O(n) space complexity
+int maxSubArray(vector<int>& nums) {
+    int n = nums.size();
+    vector<int> dp(n, 0);
+    dp[0] = nums[0];
+    int max_sum = dp[0];
+    cout << dp[0];
+    for (int i = 1; i < n; ++i) {
+      dp[i] = max(nums[i], dp[i-1]+nums[i]);
+      cout << ", " << dp[i];
+      max_sum = max(max_sum, dp[i]);
+    }
+    cout << endl;
+    return max_sum;
+}
+
+// q 53 -- use O(1) space complexity
+int maxSubArray_o1_space(vector<int>& nums) {
+    int n = nums.size();
+    int dp_prev = nums[0];
+    int dp_curr = nums[0];
+    int max_sum = nums[0];
+    // cout << dp_curr;
+    for (int i = 1; i < n; ++i) {
+      dp_curr = max(nums[i], nums[i] + dp_prev);
+      // cout << ", " << dp_curr;
+      max_sum = max(max_sum, dp_curr);
+      dp_prev = dp_curr;
+    }
+    // cout << endl;
+    return max_sum;
+}
+
+// q 213
+// there are 2 cases: rob house 0 or not, and should be speparated
+int rob(vector<int>& nums) {
+    int n = nums.size();
+    if (n == 1) {
+      return nums[0];
+    } else if (n == 2) {
+      return max(nums[0], nums[1]);
+    }
+    // case 1: rob hosue 0
+    vector<int> dp(n, 0);
+    dp[0] = nums[0];
+    dp[1] = nums[0];
+    for (int i = 2; i < n - 1; ++i) {
+        dp[i] = max(dp[i-2]+nums[i], dp[i-1]);
+    }
+    dp[n-1] = dp[n-2];
+    int max_if_rob_0 = dp[n-1];
+
+    // case 2: do not rob house 0
+    dp.resize(n, 0);
+    dp[0] = 0;
+    dp[1] = nums[1];
+    for (int i = 2; i < n; ++i) {
+      dp[i] = max(dp[i-2]+nums[i], dp[i-1]);
+    }
+    int max_if_not_rob_0 = dp[n-1];
+
+    return max(max_if_rob_0, max_if_not_rob_0);
+}
+
+// q 343
+int integerBreak(int n) {
+    if (n < 5) {
+      return n;
+    }
+    vector<int> dp(n+1, 0);
+    for (int i = 0; i < 5; ++i) {
+      dp[i] = i;
+    }
+    for (int i = 5; i <= n; ++i) {
+      for (int k = 1; k <= i/2; ++k) {
+        dp[i] = max(dp[i], dp[k]*dp[i-k]);
+      }
+    }
+    return dp[n];
+}
+
+// q 583
+int minDistance(string word1, string word2) {
+  int n1 = word1.size(), n2 = word2.size();
+  if (n1 == 0) {
+    return n2;
+  } else if (n2 == 0) {
+    return n1;
+  }
+  vector<vector<int>> dp(n1+1, vector<int>(n2+1, n1+n2));
+  for (int j = 1; j <= n2; ++j) {
+    dp[0][j] = j;
+  }
+  for (int i = 1; i <= n1; ++i) {
+    dp[i][0] = i;
+  }
+  dp[0][0] = 0;
+  for (int i = 1; i <= n1; ++i) {
+    for (int j = 1; j <= n2; ++j) {
+      if (word1[i-1] == word2[j-1]) {
+        dp[i][j] = dp[i-1][j-1];
+      } else {
+        dp[i][j] = min(dp[i-1][j-1]+2, min(dp[i-1][j]+1, dp[i][j-1]+1));
+        dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1]);
+      }
+      // cout << dp[i][j] << ", ";
+    }
+    // cout << endl;
+  }
+  return dp[n1][n2];
+}
+
+// q 583 - O(n) space complexity
+// @example - good exmaple of tabulation
+int minDistance_o_n_space(string word1, string word2) {
+  int n1 = word1.size(), n2 = word2.size();
+  if (n1 == 0) {
+    return n2;
+  } else if (n2 == 0) {
+    return n1;
+  }
+  vector<int> dp_prev_row(n2+1, n1+n2);
+  vector<int> dp_curr_row(n2+1, n1+n2);
+  dp_prev_row[0] = 0;
+  for (int j = 1; j <= n2; ++j) {
+    dp_prev_row[j] = j;
+  }
+  for (int i = 1; i <= n1; ++i) {
+    dp_curr_row[0] = i;
+    for (int j = 1; j <= n2; ++j) {
+      if (word1[i-1] == word2[j-1]) {
+        dp_curr_row[j] = dp_prev_row[j-1];
+      } else {
+        dp_curr_row[j] = min(dp_prev_row[j-1]+2, min(dp_prev_row[j]+1, dp_curr_row[j-1]+1));
+        //dp[i][j] = 1 + min(dp[i-1][j], dp[i][j-1]);
+      }
+      // cout << dp_curr_row[j] << ", ";
+    }
+    // cout << endl;
+    dp_prev_row = dp_curr_row;
+    // dp_curr_row.resize(n2+1, n1+n2);
+  }
+  return dp_curr_row[n2];
+}
+
 int main() {
-  string s = "226";
-  int output = numDecodings_small_space(s);
+  string w1 = "leetcode", w2 = "etco";
+  // cout << w1 << endl;
+  int output = minDistance_o_n_space(w1, w2);
   cout << output << endl;
   return 0;
 }
+
+/*
+to compile this file, type in terminal in the root folder:
+  g++ -std=c++20 leetcode-practice/from-lc101.cpp -o .bin/leetcode-practice@@from-lc101.bin
+to run the compiled binary, type in terminal in the root folder:
+  .bin/leetcode-practice@@from-lc101.bin
+*/
