@@ -8,8 +8,48 @@ to run the compiled binary, type in terminal in the root folder:
 #include <iostream>
 #include <typeinfo>
 #include <vector>
+#include <list>
 
 using namespace std;
+
+/** @brief trial of list insert */
+void list_insert_trial() {
+  list<int> mylist;
+  list<int>::iterator it;
+
+  // set some initial values:
+  for (int i=1; i<=5; ++i) mylist.push_back(i); // 1 2 3 4 5
+
+  it = mylist.begin();
+  cout << "1. it: " << *it << endl;
+
+  ++it;       // it points now to number 2           ^
+  cout << "2. it: " << *it << endl;
+
+  mylist.insert (it,10);                        // 1 10 2 3 4 5
+
+  // "it" still points to number 2                      ^
+  mylist.insert (it,2,20);                      // 1 10 20 20 2 3 4 5
+  cout << "3. it: " << *it << endl;
+
+  --it;       // it points now to the second 20            ^
+  cout << "4. it: " << *it << endl;
+
+  vector<int> myvector (2,30);
+  mylist.insert (it,myvector.begin(),myvector.end());
+  cout << "5. it: " << *it << endl;
+                                                // 1 10 20 30 30 20 2 3 4 5
+                                                //               ^
+
+  --it;
+  cout << "6. it: " << *it << endl;
+
+  cout << "mylist contains:";
+  for (it=mylist.begin(); it!=mylist.end(); ++it) {
+    cout << ' ' << *it;
+  }
+  cout << '\n';
+}
 
 /** @brief trial of vector erase */
 void vector_erase_trial() {
@@ -48,7 +88,7 @@ void vector_erase_trial() {
   cout << nums[nn-1] << endl;
 }
 
-/** @brief trial of std::integral_constant */
+/** @brief trial of integral_constant */
 template <int n> struct twice_cons : integral_constant<int, n*2> { inline static int triple_v = 100; };
 void integral_constant_trial() {
   twice_cons<7> twice_v;
@@ -66,6 +106,6 @@ void integral_constant_trial() {
 }
 
 int main() {
-    vector_erase_trial();
+    list_insert_trial();
     return 0;
 }
