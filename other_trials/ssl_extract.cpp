@@ -25,20 +25,40 @@ struct SSLPacketHeader {
 
 void output_ssl_certificate(BIO* bio) {
   cout << "reach place 5" << endl;
-  SSL_CTX* ctx = SSL_CTX_new(SSLv23_method());
-  SSL* ssl = SSL_new(ctx);
-  SSL_set_bio(ssl, bio, bio);
-  X509* cert = SSL_get_peer_certificate(ssl);
   int bio_length = BIO_ctrl_pending(bio);
-  cout << "reach place 5.1, " << "bio len: " << bio_length << endl;
-  if (cert != nullptr) {
-    cout << "reach place 5.2" << endl;
-    X509_print_fp(stdout, cert); // Print certificate details to stdout
-    X509_free(cert);
+  u_char len_buf[3];
+  int bytes_read = BIO_read(bio, len_buf, 3);
+  int cert_len = len_buf[0]*256*256 + len_buf[1]*256 + len_buf[2];
+  u_char cert_buf[cert_len];
+  int bytes_read2 = BIO_read(bio, cert_buf, cert_len);
+  // cout << "bytes_read: " << bytes_read << "buf: " << buf[0]+0 << ", " << buf[1]+0 << ", " << buf[2]+0 << endl;
+  BIO* bio_temp = BIO_new(BIO_s_mem());
+  BIO_write(bio_temp, cert_buf, cert_len);
+  SSL_CTX* ctx = SSL_CTX_new(SSLv23_server_method());
+  SSL* ssl = SSL_new(ctx);
+  SSL_set_accept_state(ssl);
+  cout << "&&&& bio_temp len: " << BIO_ctrl_pending(bio_temp) << endl;
+  SSL_set_bio(ssl, bio_temp, bio_temp);
+  cout << "SSL State: " << SSL_state_string_long(ssl) << endl;
+  try {
+    X509* cert = SSL_get_peer_certificate(ssl);
+    if (cert != nullptr) {
+      cout << "reach place 5.2" << endl;
+      X509_print_fp(stdout, cert); // Print certificate details to stdout
+      X509_free(cert);
+    }
+  } catch (const std::exception& ex) {
+    // Catch any exception and print the error message
+    std::cerr << "An exception occurred: " << ex.what() << std::endl;
   }
-  cout << "reach place 5.3" << endl;
-  SSL_free(ssl);
+  // X509* cert = PEM_read_bio_X509(bio_temp, nullptr, nullptr, nullptr);
+  cout << "reach place 5.1, " << "bio len: " << bio_length << endl;
+  if (bio_temp != nullptr) {
+    BIO_free(bio_temp);
+  }
+  // SSL_free(ssl);
   cout << "reach place 5.4" << endl;
+  BIO_reset(bio);
 }
 
 void processPacket(const u_char* packet, int packetLength, int loop_num, BIO* bio, int & remained_cert_len) {
