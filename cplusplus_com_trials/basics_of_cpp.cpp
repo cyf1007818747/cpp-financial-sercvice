@@ -9,6 +9,9 @@ to run the compiled binary, type in terminal in the root folder:
 #include <vector>
 #include <string>
 #include <limits>
+#include <map>
+// #include <exception>
+// #include <stdexcept>
 
 using namespace std;
 
@@ -90,6 +93,13 @@ template <typename T> constexpr T sum_of_2(T a, T b) {
   return a + b;
 }
 
+void array_3d_trial() {
+  char myword[] = "myword";
+  string mystr = "myword";
+  mystr = "newstr";
+
+}
+
 /** @brief Test the methods in std::numeric_limits */
 void numeric_limits_trial() {
   cout << int() << endl;
@@ -102,9 +112,35 @@ void numeric_limits_trial() {
   cout << "i: " << i << ", sum: " << sum << endl;
   cout << "4. " << numeric_limits<unsigned int>::digits10 << endl;
   cout << "5. " << numeric_limits<double>::epsilon << endl;
+  int m = int();
+  ++m;
+  cout << "m: " << m << endl;
+}
+
+void exception_trial() {
+  int m = 4;
+  if (m < 5) {
+    throw logic_error("logic error - m < 5");
+  }
+}
+
+void type_casting_trial() {
+  string s = "1230";
+  int num = stoi(s);
+}
+
+void multimap_trial() {
+  multimap<int, string> mulmap;
+  mulmap.insert(make_pair(1, "111"));
+  mulmap.insert(make_pair(2, "222"));
+  mulmap.insert(make_pair(1, "11111"));
+
+  // for (const auto& pair : mulmap) {
+  //   std::cout << "Key: " << pair.first << ", Value: " << pair.second << std::endl;
+  // }
 }
 
 int main() {
-    numeric_limits_trial();
-    return 0;
+  multimap_trial();
+  // return 0;
 }
